@@ -31,18 +31,20 @@ public class DashboardController {
 
 	@Autowired
 	public TaskService taskService;
-
+	
 	@Autowired
 	public MealService mealService;
-
+	
 	@Autowired
 	public FoodService foodService;
-
+	
+	
+	
+	
 	// ===================== RENDER MAIN DASHBOARD ================//
 
 	@RequestMapping("/dashboard")
-	public String renderDashboard(@ModelAttribute("task") Task task, @ModelAttribute("meal") Meal meal,
-			HttpSession session, Model model) {
+	public String renderDashboard(@ModelAttribute("task") Task task,@ModelAttribute("meal")Meal meal, HttpSession session, Model model) {
 		Long userId = (Long) session.getAttribute("user_id");
 		Task taskById = taskService.findTaskById(userId);
 
@@ -59,7 +61,7 @@ public class DashboardController {
 			model.addAttribute("loggedUser", loggedUser);
 			model.addAttribute("foods", foods);
 			model.addAttribute("taskById", taskById);
-
+			
 //	
 //			LocalTime midNight = LocalTime.of(00,00,00);
 //			LocalTime timeOfDay = LocalTime.now();
@@ -68,95 +70,97 @@ public class DashboardController {
 //				System.out.println("byebyemeals");
 //				mealService.deleteMealbyUserId(userId);
 //			}
-
-			// LOOPING THROUGH AN ARRAYLIST OF MEALS
-			// YUM & FOOD BEING THE ITERATOR
-			// ADDING FROM DECLARED VARIABLES FROM CALLING ON THE GETTERS OF EACH MODEL
-			// LOOPS THROUGH AND LOOKS FOR FOOD IN MEALS ARRAY
-
+			
+			// LOOPING THROUGH AN ARRAYLIST OF MEALS 
+			//YUM & FOOD BEING THE ITERATOR 
+			//ADDING FROM DECLARED VARIABLES FROM CALLING ON THE GETTERS OF EACH MODEL
+			//LOOPS THROUGH AND LOOKS FOR FOOD IN MEALS ARRAY		
+			
 			ArrayList<Meal> meals = (ArrayList<Meal>) mealService.findMealByUserId(userId);
 			double maxDailyCalTotal = loggedUser.getMaxCalories();
 			double bfastCalTotal = 0;
 			double lunchCalTotal = 0;
 			double dinnerCalTotal = 0;
 			double snacksCalTotal = 0;
-
-			for (Meal yum : meals) {
-				for (Food food : yum.getFoods()) {
-					if (yum.getMealType().equals("Breakfast")) {
+			
+			for (Meal yum : meals){
+				for (Food food : yum.getFoods()){
+					if(yum.getMealType().equals("Breakfast")){
 						bfastCalTotal += food.getCalorieCount();
-					} else if (yum.getMealType().equals("Lunch")) {
+					}
+					else if(yum.getMealType().equals("Lunch")){
 						lunchCalTotal += food.getCalorieCount();
-					} else if (yum.getMealType().equals("Dinner")) {
-						dinnerCalTotal += food.getCalorieCount();
-					} else if (yum.getMealType().equals("Snack")) {
-						snacksCalTotal += food.getCalorieCount();
+					}
+					else if(yum.getMealType().equals("Dinner")){
+						 dinnerCalTotal += food.getCalorieCount();
+					}
+					else if(yum.getMealType().equals("Snack")){
+						 snacksCalTotal += food.getCalorieCount();
 					}
 				}
 			}
-
+					
 			model.addAttribute("bfastCalTotal", (int) bfastCalTotal);
 			model.addAttribute("lunchCalTotal", (int) lunchCalTotal);
 			model.addAttribute("dinnerCalTotal", (int) dinnerCalTotal);
-			model.addAttribute("snacksCalTotal", (int) snacksCalTotal);
-			model.addAttribute("totalCalsOfDay",
-					(int) bfastCalTotal + (int) lunchCalTotal + (int) dinnerCalTotal + (int) snacksCalTotal);
-			model.addAttribute("caloriesLeftOfDay", (int) maxDailyCalTotal - (int) bfastCalTotal - (int) lunchCalTotal
-					- (int) dinnerCalTotal - (int) snacksCalTotal);
+			model.addAttribute("snacksCalTotal",(int)  snacksCalTotal);
+			model.addAttribute("totalCalsOfDay", (int) bfastCalTotal + (int) lunchCalTotal + (int) dinnerCalTotal + (int) snacksCalTotal);
+			model.addAttribute("caloriesLeftOfDay", (int) maxDailyCalTotal - (int) bfastCalTotal - (int) lunchCalTotal - (int) dinnerCalTotal - (int) snacksCalTotal);
 		}
+		
 
 		return "dashboard.jsp";
 	}
-
-	/* ========================= CREATE TASK ================================ */
-
+	
+	
+	/* ========================= CREATE TASK ================================*/
+	
+	
 	@RequestMapping(value = "/create/task", method = RequestMethod.POST)
 	public String createNewTask(@Valid @ModelAttribute("task") Task task, BindingResult result) {
 
-		if (result.hasErrors()) {
 
-			return "dashboard.jsp";
-		}
-
-		taskService.createTask(task);
+		taskService.createTask(task, result);
 		return "redirect:/dashboard";
 	}
-
-	// ============================ UPDATE TASK ==============================//
-
-	@RequestMapping(value = "/update/task/{id}", method = RequestMethod.PUT)
-	public String editTask(@Valid @ModelAttribute("task") Task task, BindingResult result) {
-		if (result.hasErrors()) {
-
-			return "dashboard.jsp";
-		}
-		taskService.updateTask(task);
+	
+	//============================ UPDATE TASK ==============================//
+	
+	
+	@RequestMapping(value="/update/task/{id}", method=RequestMethod.PUT)
+	public String editTask(@Valid @ModelAttribute("task")Task task, BindingResult result) {
+		
+		taskService.updateTask(task, result);
 		return "redirect:/dashboard";
 	}
-
+	
+	
 	// ================== SAVE AND FINISH TASK ==================//
-
+	
 	@RequestMapping(value = "/finish/task/{id}", method = RequestMethod.POST)
-	public String finishTask(@PathVariable("id") Long id) {
+	public String finishTask( @PathVariable("id")Long id) {
 
-		taskService.updateFinish(id, true);
+	
+		taskService.updateFinish(id, true);		
 		return "redirect:/dashboard";
 	}
-
+	
+	
 	// ===================== DELETE TASK ======================//
-
-	@RequestMapping(value = "/delete/task/{id}", method = RequestMethod.DELETE)
-	public String deleteTask(@PathVariable("id") Long id) {
-
-		taskService.deleteTask(id);
-		return "redirect:/dashboard";
+	
+	@RequestMapping(value="/delete/task/{id}", method=RequestMethod.DELETE)	
+	public String deleteTask(@PathVariable("id")Long id) {
+	
+	taskService.deleteTask(id);
+	return "redirect:/dashboard";
 	}
-
+	
 	// ===================== CREATE MEAL ======================//
 
-	@RequestMapping(value = "/create/meal", method = RequestMethod.POST)
-	public String createMeal(@Valid @ModelAttribute("meal") Meal meal, BindingResult result) {
-
+	
+	@RequestMapping(value="/create/meal", method = RequestMethod.POST)
+	public String createMeal(@Valid @ModelAttribute("meal")Meal meal, BindingResult result) {
+		
 		if (result.hasErrors()) {
 
 			return "dashboard.jsp";
@@ -165,9 +169,9 @@ public class DashboardController {
 		mealService.createMeal(meal);
 		return "redirect:/dashboard";
 	}
-
+	
 // ======================== RENDER SETTINGS PAGES =======================//
-
+	
 //	@RequestMapping("/user/settings/{id}")
 //	public String renderSettingsPage(@PathVariable("id")Long id,  @ModelAttribute("user") User user, HttpSession session, Model model) {
 //		 Long userId  = (Long) session.getAttribute("user_id");
@@ -207,93 +211,100 @@ public class DashboardController {
 //	
 //}
 //   
-
+	
+	
 //========================== RENDER FOOD PAGE ===========================//
-
+	
 	@RequestMapping("/food/data")
 	public String renderFoodDataPage(HttpSession session, Model model) {
-		Long userId = (Long) session.getAttribute("user_id");
-
+	Long userId = (Long) session.getAttribute("user_id");
+		
 		if (userId == null) {
 
 			return "redirect:/";
 
 		} else {
-
-			User loggedUser = userService.findUserById(userId);
-			model.addAttribute("loggedUser", loggedUser);
-			return "food.jsp";
+	
+		User loggedUser = userService.findUserById(userId);	
+		model.addAttribute("loggedUser", loggedUser);
+		return "food.jsp";
 		}
 	}
-
+	
 // ======================= RENDER SUMMARY PAGE ======================== //
-
+	
 	@RequestMapping("/todays/summary")
 	public String renderTodaysSummary(HttpSession session, Model model) {
 		Long userId = (Long) session.getAttribute("user_id");
-
+		
 		if (userId == null) {
 
 			return "redirect:/";
 
 		} else {
+		
+		ArrayList<Meal> meals = (ArrayList<Meal>) mealService.findMealByUserId(userId);
+		Meal mealIds = mealService.findMealById(userId);
+		Food foodIds = foodService.findFoodById(userId);
+		ArrayList<Food> foods = (ArrayList<Food>) foodService.allFoods();
+		ArrayList<Task> tasks = (ArrayList<Task>) taskService.allTasks();
+		User loggedUser = userService.findUserById(userId);
 
-			ArrayList<Meal> meals = (ArrayList<Meal>) mealService.findMealByUserId(userId);
-			Meal mealIds = mealService.findMealById(userId);
-			Food foodIds = foodService.findFoodById(userId);
-			ArrayList<Food> foods = (ArrayList<Food>) foodService.allFoods();
-			ArrayList<Task> tasks = (ArrayList<Task>) taskService.allTasks();
-			User loggedUser = userService.findUserById(userId);
-
-			model.addAttribute("loggedUser", loggedUser);
-			model.addAttribute("tasks", tasks);
-			model.addAttribute("foods", foods);
-			model.addAttribute("meals", meals);
-			model.addAttribute("foodIds", foodIds);
-			model.addAttribute("mealIds", mealIds);
-
-			double maxDailyCalTotal = loggedUser.getMaxCalories();
-			double bfastCalTotal = 0;
-			double lunchCalTotal = 0;
-			double dinnerCalTotal = 0;
-			double snacksCalTotal = 0;
-
-			for (Meal yum : meals) {
-				for (Food food : yum.getFoods()) {
-					if (yum.getMealType().equals("Breakfast")) {
-						bfastCalTotal += food.getCalorieCount();
-					} else if (yum.getMealType().equals("Lunch")) {
-						lunchCalTotal += food.getCalorieCount();
-					} else if (yum.getMealType().equals("Dinner")) {
-						dinnerCalTotal += food.getCalorieCount();
-					} else if (yum.getMealType().equals("Snack")) {
-						snacksCalTotal += food.getCalorieCount();
-					}
+		model.addAttribute("loggedUser", loggedUser);
+		model.addAttribute("tasks", tasks);
+		model.addAttribute("foods", foods);
+		model.addAttribute("meals", meals);
+		model.addAttribute("foodIds", foodIds);
+		model.addAttribute("mealIds", mealIds);
+		
+		double maxDailyCalTotal = loggedUser.getMaxCalories();
+		double bfastCalTotal = 0;
+		double lunchCalTotal = 0;
+		double dinnerCalTotal = 0;
+		double snacksCalTotal = 0;
+		
+		for (Meal yum : meals){
+			for (Food food : yum.getFoods()){
+				if(yum.getMealType().equals("Breakfast")){
+					bfastCalTotal += food.getCalorieCount();
+				}
+				else if(yum.getMealType().equals("Lunch")){
+					lunchCalTotal += food.getCalorieCount();
+				}
+				else if(yum.getMealType().equals("Dinner")){
+					 dinnerCalTotal += food.getCalorieCount();
+				}
+				else if(yum.getMealType().equals("Snack")){
+					 snacksCalTotal += food.getCalorieCount();
 				}
 			}
-
-			model.addAttribute("bfastCalTotal", (int) bfastCalTotal);
-			model.addAttribute("lunchCalTotal", (int) lunchCalTotal);
-			model.addAttribute("dinnerCalTotal", (int) dinnerCalTotal);
-			model.addAttribute("snacksCalTotal", (int) snacksCalTotal);
-			model.addAttribute("totalCalsOfDay",
-					(int) bfastCalTotal + (int) lunchCalTotal + (int) dinnerCalTotal + (int) snacksCalTotal);
-			model.addAttribute("caloriesLeftOfDay", (int) maxDailyCalTotal - (int) bfastCalTotal - (int) lunchCalTotal
-					- (int) dinnerCalTotal - (int) snacksCalTotal);
-
+		}
+				
+		model.addAttribute("bfastCalTotal", (int) bfastCalTotal);
+		model.addAttribute("lunchCalTotal", (int) lunchCalTotal);
+		model.addAttribute("dinnerCalTotal", (int) dinnerCalTotal);
+		model.addAttribute("snacksCalTotal",(int)  snacksCalTotal);
+		model.addAttribute("totalCalsOfDay", (int) bfastCalTotal + (int) lunchCalTotal + (int) dinnerCalTotal + (int) snacksCalTotal);
+		model.addAttribute("caloriesLeftOfDay", (int) maxDailyCalTotal - (int) bfastCalTotal - (int) lunchCalTotal - (int) dinnerCalTotal - (int) snacksCalTotal);
+	
+	
+			
 		}
 		return "summary.jsp";
 	}
-
-	// =========================== DELETE ALL MEALS TO RESET CALORIES BACK TO ZERO =====================//
-
-	@RequestMapping(value = "/delete/meal/all", method = RequestMethod.DELETE)
+	
+	//===========================  DELETE ALL MEALS =====================//
+	
+	@RequestMapping(value="/delete/meal/all", method=RequestMethod.DELETE)
 	public String deleteMeals(HttpSession session) {
 		Long userId = (Long) session.getAttribute("user_id");
-
+		
+		
 		mealService.deleteMealsbyUserId(userId);
-
+		
 		return "redirect:/dashboard";
 	}
+	
+	
 
 }

@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 import com.raden.diet_gram.models.Task;
 import com.raden.diet_gram.repositories.TaskRepository;
@@ -20,8 +21,16 @@ public class TaskService {
 	}
 
 	
-	public Task createTask(Task task) { 
-		return taskRepository.save(task);
+	public Task createTask(Task task, BindingResult result) { 
+		
+		if(result.hasErrors()) {
+           
+			return null;
+			
+		} else {
+			
+			return taskRepository.save(task);
+		}
 	}
 	
 	public Task findTaskById(Long id) { 
@@ -40,8 +49,17 @@ public class TaskService {
 	
 	
 
-	public Task updateTask(Task task) { 
-		return taskRepository.save(task);
+	public Task updateTask(Task task, BindingResult result) { 
+		
+		if(result.hasErrors()) {
+	           
+			return null;
+			
+		} else {
+			
+			return taskRepository.save(task);
+			
+		}
 	}
 	
 	
