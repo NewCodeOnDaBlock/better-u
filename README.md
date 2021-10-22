@@ -1,10 +1,10 @@
 # better-u
 
-This application offers an all in one fitness, lifestyle, and intermittent fasting tracking abilities.
+This application offers an all in one fitness, productivity, and intermittent fasting tracking capability.
 
-It offers the user easy accessibility to add energy consumption from a global food database API for accurate tracking and macro research of the most important macros. With this functionatlity, it also comes with simple visual accessiblity to know where users are currently at through the day with ease.
+It offers the user easy accessibility to add energy consumption from a global food database API for accuracy and further macro research. With this functionatlity, it also comes with a sleek and simple displayed viusal for ease of use.
 
-The application also offers an intermittent fasting timer capability to allow users to join the community of intermittent fasting to assist in not only in their fitness goals, but also life and productivity goals. 
+The application also offers an intermittent fasting timer capability to allow users to join the community of intermittent fasting to assist in not only their fitness goals, but also life and productivity goals. 
 
 This application also features a daily task list to keep track of daily productivity easily. User may add, delete, FINISH, and update tasks.
 
