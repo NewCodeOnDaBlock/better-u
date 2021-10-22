@@ -81,7 +81,7 @@ function makeFoodData(data){ // concatinating data passed in into the browser
 
 async function search(){ // FETCHING DATA FROM API 
 	
-	var response = await fetch ("https://api.edamam.com/api/food-database/v2/parser?app_id=3ad81926&app_key=0889ecdd59b2a58042f8df3d31dfccec&ingr="+ currentFoodData  +"&nutrition-type=cooking");
+	var response = await fetch ("https://api.edamam.com/api/food-database/v2/parser?app_id=API-PLACEHOLDER&app_key=0889ecdd59b2a58042f8df3d31dfccec&ingr="+ currentFoodData  +"&nutrition-type=cooking");
 	var foodData = await response.json();
 	console.log(foodData);
 	dataCard.innerHTML = makeFoodData(foodData);
