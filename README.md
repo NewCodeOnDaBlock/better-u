@@ -1,6 +1,6 @@
 # better-u
 
-This application offers all in one fitness, lifestyle, and intermittent fasting tracking abilities.
+This application offers all an in one fitness, lifestyle, and intermittent fasting tracking abilities.
 
 It offers the user easy accessibility to add energy consumption from a global food database API for accurate tracking and macro research of the most important macros. With this functionatlity, it also comes with simple visual accessiblity to know where users are currently at through the day with ease.
 
